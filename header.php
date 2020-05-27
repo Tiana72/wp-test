@@ -8,7 +8,9 @@
 </head>
 <body <?php body_class(); ?>>
 
+<!-- Просмотр настроек 
 <?php debug(get_theme_mods()); ?>
+<?php echo get_theme_mod('background_image'); ?> -->
 
     <?php if (is_front_page()) : ?>
         <div class="header-image" style="background: url(<?php echo get_custom_header()->url; ?>) center no-repeat; background-size: cover; height: 50vh;"></div>
@@ -27,16 +29,21 @@
             <span class="navbar-toggler-icon"></span>
         </button>
 
-        <?php
-        wp_nav_menu(array(
-            'theme_location'  => 'header_menu1',
-            'container_class' => 'collapse navbar-collapse',
-            'menu_class'      => 'navbar-nav mr-auto',
-            'container_id'    => 'navbarSupportedContent',
-            'walker'          => new Test_Menu,
-        )); ?>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <?php
+            wp_nav_menu(array(
+                'theme_location'  => 'header_menu1',
+                'container' => '',
+                'menu_class'      => 'navbar-nav mr-auto',
+                'container_id'    => 'navbarSupportedContent',
+                'walker'          => new Test_Menu,
+            )); ?>
+            <p class="test-phone" <?php if (false === get_theme_mod('test_show_phone')) echo ' style="display: none;"' ?>> 
+                Тел.: <span><?php echo get_theme_mod('test_phone'); ?></span>
+            </p>
+        </div>
 
-      <!--<div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <!--
           <ul class="navbar-nav mr-auto">
               <li class="nav-item active">
                   <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>

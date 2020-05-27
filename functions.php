@@ -80,7 +80,83 @@ function test_widgets1(){
 
 // Кастомайзер
 
-//function test_customize_register($wp-customize) {
+function test_customize_register($wp_customize) {
+    // Добавляем опцию
+    $wp_customize -> add_setting('test_link_color', array (
+        'default' => '#007bff',
+        'sanitize_callback' => 'sanitize_hex_color',
+        'transport' => 'postMessage', 
+    ) );
 
-//}
-//add_action('customize_register', 'test_customize_register');
+    // Добавляем элемент управления
+    $wp_customize -> add_control(
+        new WP_Customize_Color_Control (
+            $wp_customize,
+            'test_link_color',
+            array (
+                'label' => 'Цвет ссылок',
+                'section' => 'colors',
+                'setting' => 'test_link_color',
+            )
+        ) );
+
+    // custom section
+    $wp_customize -> add_section ('test_site_data', array (
+        'title' => 'Информация о сайте',
+        'priority' => 20,
+    ) );
+    $wp_customize -> add_setting('test_phone', array (
+        'default' => '',
+        'transport' => 'postMessage', 
+    ) );
+    $wp_customize -> add_control(
+            'test_phone',
+            array (
+                'label' => 'Телефон',
+                'section' => 'test_site_data',
+                'type' => 'text',
+            )
+        );
+
+        $wp_customize -> add_setting('test_show_phone', array (
+            'default' => true,
+            'transport' => 'postMessage', 
+        ) );
+        $wp_customize -> add_control(
+                'test_show_phone',
+                array (
+                    'label' => 'Показать',
+                    'section' => 'test_site_data',
+                    'type' => 'checkbox',
+                )
+            );
+    
+}
+
+
+add_action('customize_register', 'test_customize_register');
+
+/* function test_customize_css() {
+    ?>
+         <style type="text/css">
+             a, a:hover { color:<?php echo get_theme_mod('test_link_color'); ?>; }
+         </style>
+    <?php
+} */
+
+// Другой вариант записи этой функции
+function test_customize_css() {
+    $test_link_color = get_theme_mod('test_link_color');
+    echo <<<HEREDOC
+<style type="text/css">
+a, a:hover { color: $test_link_color; }
+</style>
+HEREDOC;
+}
+
+add_action( 'wp_head', 'test_customize_css');
+
+function test_customize_js () {
+    wp_enqueue_script( 'test_customize_js', get_template_directory_uri() . '/assets/js/customize.js', array( 'jquery','customize-preview' ), false, true);
+}
+add_action( 'customize_preview_init', 'test_customize_js' );
